@@ -1,125 +1,59 @@
 "use client";
+import { useState } from "react";
 
-import { useEffect, useState } from "react";
+export default function Home() {
+  const [page, setPage] = useState("home");
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [list, setList] = useState([]);
 
-function HomeView({ onNavigate }) {
-  return (
-    <main style={{ padding: "50px", textAlign: "center" }}>
-      <h1>Welcome to KarobarApp</h1>
-      <p>Manage your business with KarobarApp.</p>
+  const items = [
+    { name: "Atta 10 Kilo", price: 1200 },
+    { name: "Chawal 5 Kilo", price: 1500 },
+    { name: "Cheeni 5 Kilo", price: 800 },
+    { name: "Daal 1 Kilo", price: 350 },
+    { name: "Oil 1 Litre", price: 450 },
+    { name: "Chai 500 Gram", price: 700 },
+  ];
 
-      <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "20px" }}>
-        <button type="button" onClick={() => onNavigate("users")}>
-          View Users
-        </button>
-
-        <button type="button" onClick={() => onNavigate("about")}>
-          About Us
-        </button>
-      </div>
-    </main>
-  );
-}
-
-function UsersView({ onBack }) {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function getUsers() {
-      try {
-        const response = await fetch("https://jsonplaceholder.typicode.com/users");
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        console.error("Error:", err);
-        setError("Failed to load users. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    getUsers();
-  }, []);
-
-  return (
-    <main style={{ padding: "30px" }}>
-      <button type="button" onClick={onBack}>
-        ← Back to Home
-      </button>
-      <h1>Users List</h1>
-
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
-      ) : (
-        <table border="1" cellPadding="12" style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Email</th>
-              <th>City</th>
-              <th>Company</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.address?.city}</td>
-                <td>{user.company?.name}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </main>
-  );
-}
-
-function AboutView({ onBack }) {
-  return (
-    <main style={{ padding: "50px" }}>
-      <button type="button" onClick={onBack}>
-        ← Back to Home
-      </button>
-      <h1>About KarobarApp</h1>
-
-      <p>KarobarApp is a Next.js learning project.</p>
-
-      <h2>Technologies Used</h2>
-
-      <ul>
-        <li>Next.js</li>
-        <li>React.js</li>
-        <li>JavaScript</li>
-        <li>Fetch API</li>
-        <li>JSONPlaceholder API</li>
-      </ul>
-    </main>
-  );
-}
-
-export default function KarobarApp() {
-  const [view, setView] = useState("home");
-
-  if (view === "users") {
-    return <UsersView onBack={() => setView("home")} />;
+  if (page === "saman") {
+    return (
+      <main style={{ padding: 20, fontFamily: "sans-serif" }}>
+        <button onClick={() => setPage("home")}>Wapis</button>
+        <h1>Saman Ki List</h1>
+        {items.map((i, index) => (
+          <div key={index} style={{ border: "1px solid #ddd", padding: 10, margin: 10, borderRadius: 10, display: "flex", justifyContent: "space-between" }}>
+            <span>{i.name}</span><b>Rs {i.price}</b>
+          </div>
+        ))}
+      </main>
+    );
   }
 
-  if (view === "about") {
-    return <AboutView onBack={() => setView("home")} />;
+  if (page === "khata") {
+    return (
+      <main style={{ padding: 20, fontFamily: "sans-serif" }}>
+        <button onClick={() => setPage("home")}>Wapis</button>
+        <h1>Asan Khata</h1>
+        <input placeholder="Gahak Ka Naam" value={name} onChange={(e) => setName(e.target.value)} style={{ padding: 10, width: "100%", marginBottom: 10 }} />
+        <input placeholder="Udhar Raqam" value={amount} onChange={(e) => setAmount(e.target.value)} style={{ padding: 10, width: "100%", marginBottom: 10 }} />
+        <button onClick={() => { if (name && amount) { setList([...list, { name, amount }]); setName(""); setAmount(""); } }} style={{ padding: 12, width: "100%", background: "green", color: "white", border: "none" }}>Khata Me Likhen</button>
+        {list.map((l, i) => (
+          <div key={i} style={{ border: "1px solid #ddd", padding: 10, marginTop: 10, display: "flex", justifyContent: "space-between" }}>
+            <span>{l.name}</span><b>Rs {l.amount}</b>
+          </div>
+        ))}
+      </main>
+    );
   }
 
-  return <HomeView onNavigate={setView} />;
+  return (
+    <main style={{ padding: 20, textAlign: "center", fontFamily: "sans-serif" }}>
+      <h1>Asan Khata</h1>
+      <p>Karyana Store Ka Asan Hisab Kitab</p>
+      <button onClick={() => setPage("saman")} style={{ padding: 12, margin: 5, fontSize: 16 }}>Saman Dekhen</button>
+      <button onClick={() => setPage("khata")} style={{ padding: 12, margin: 5, fontSize: 16 }}>Asan Khata</button>
+      <p style={{ marginTop: 20 }}>Taza Saman - Munasib Qeemat - Asan Hisab</p>
+    </main>
+  );
 }
